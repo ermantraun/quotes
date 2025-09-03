@@ -1,0 +1,42 @@
+{% extends "quotesapp/base.html" %}
+{% block title %}Добавить цитату{% endblock %}
+{% block content %}
+<h2>Добавление цитаты</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="grid">
+        <label>Новый источник (необязательно):
+            {{ form.source_name }}
+            <small>{{ form.source_name.help_text }}</small>
+            {% if form.source_name.errors %}<small style="color:#c33">{{ form.source_name.errors.0 }}</small>{% endif %}
+        </label>
+        <label>Существующий источник:
+            {{ form.source }}
+            {% if form.source.errors %}<small style="color:#c33">{{ form.source.errors.0 }}</small>{% endif %}
+        </label>
+    </div>
+    <label>Текст цитаты:
+        {{ form.text }}
+        {% if form.text.errors %}<small style="color:#c33">{{ form.text.errors.0 }}</small>{% endif %}
+    </label>
+    <div class="grid">
+        <label>Вес:
+            {{ form.weight }}
+            {% if form.weight.errors %}<small style="color:#c33">{{ form.weight.errors.0 }}</small>{% endif %}
+        </label>
+        <label>Автор:
+            {{ form.author }}
+        </label>
+        <label>Язык:
+            {{ form.language }}
+        </label>
+        <label>Год:
+            {{ form.year }}
+        </label>
+    </div>
+    {% if form.non_field_errors %}
+        <article style="border-left:4px solid #c33">{{ form.non_field_errors }}</article>
+    {% endif %}
+    <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Цитаты{% endblock %}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-sXb2TC2fIBgqtOOrL+xxXwGe4xFas3Cm3dEQVvks6TDfVbG8LwvLZ0lQ7BnqiUZ4g3+60dTretqjqYMkCkN4XQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {% block extra_head %}{% endblock %}
+    <style>
+        .quote-box { padding: 1rem; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
+        .stats { font-size: 0.85rem; color: #666; }
+        .flex { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .rating { font-weight: 600; }
+        nav ul { align-items: center; }
+        form.inline-filters { display: flex; gap: .5rem; flex-wrap: wrap; }
+        form.inline-filters select { min-width: 140px; }
+        .pagination { display:flex; gap:.4rem; flex-wrap: wrap; margin-top:1rem; }
+        .pagination a, .pagination span { padding:.3rem .6rem; border:1px solid #ccc; border-radius:4px; text-decoration:none; }
+        .pagination .current { background:#0366d6; color:#fff; border-color:#0366d6; }
+    </style>
+</head>
+<body>
+<header class="container">
+    <nav>
+        <ul>
+            <li><strong>Quotes</strong></li>
+        </ul>
+        <ul>
+            <li><a href="{% url 'index' %}">Случайная</a></li>
+            <li><a href="{% url 'add_quote' %}">Добавить</a></li>
+            <li><a href="{% url 'top_quotes' %}">Топ</a></li>
+            <li><a href="{% url 'dashboard' %}">Дашборд</a></li>
+            <li><a href="/admin/" target="_blank">Admin</a></li>
+        </ul>
+    </nav>
+</header>
+<main class="container">
+    {% if messages %}
+      {% for m in messages %}
+        <article style="border-left:4px solid {% if m.tags == 'success' %}#2a7f2a{% else %}#c33{% endif %};padding:0.5rem 1rem;margin-bottom:.5rem;">
+          {{ m }}
+        </article>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+<footer class="container">
+    <small>&copy; Test Task</small>
+</footer>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

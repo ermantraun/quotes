@@ -1,0 +1,35 @@
+{% extends "quotesapp/base.html" %}
+{% load static %}
+{% block title %}Случайная цитата{% endblock %}
+{% block content %}
+<h2>Случайная цитата</h2>
+{% if quote %}
+<div class="quote-box" id="quote-box" data-quote-id="{{ quote.id }}">
+    <blockquote>{{ quote.text|linebreaksbr }}</blockquote>
+    <p>
+        <em>Источник:</em> {{ quote.source.name }} ({{ quote.source.get_type_display }})
+        {% if quote.author %}<br><em>Автор:</em> {{ quote.author }}{% endif %}
+        {% if quote.year %}<br><em>Год:</em> {{ quote.year }}{% endif %}
+        <br><em>Язык:</em> {{ quote.language }}
+    </p>
+    <div class="stats">
+        Просмотров: <span id="views">{{ quote.views }}</span> |
+        Лайков: <span id="likes">{{ quote.likes }}</span> |
+        Дизлайков: <span id="dislikes">{{ quote.dislikes }}</span> |
+        Рейтинг: <span id="rating">{{ quote.rating }}</span> |
+        Вес: {{ quote.weight }}
+    </div>
+    <div class="flex" style="margin-top:.5rem;">
+        <button id="like-btn" data-id="{{ quote.id }}" data-action="like">👍 Лайк (<span id="like-count">{{ quote.likes }}</span>)</button>
+        <button id="dislike-btn" data-id="{{ quote.id }}" data-action="dislike">👎 Дизлайк (<span id="dislike-count">{{ quote.dislikes }}</span>)</button>
+        <a href="{% url 'index' %}">Обновить</a>
+    </div>
+</div>
+{% else %}
+<p>Нет цитат. Добавьте первую!</p>
+<a href="{% url 'add_quote' %}" role="button">Добавить цитату</a>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'quotesapp/js/like.js' %}"></script>
+{% endblock %}

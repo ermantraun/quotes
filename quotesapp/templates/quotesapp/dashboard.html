@@ -1,0 +1,12 @@
+{% extends "quotesapp/base.html" %}
+{% block title %}Дашборд{% endblock %}
+{% block content %}
+<h2>Дашборд</h2>
+<ul>
+  <li>Всего источников: {{ total_sources }}</li>
+  <li>Всего цитат: {{ total_quotes }}</li>
+  <li>Всего просмотров: {{ total_views }}</li>
+  <li>Источник с наибольшим числом цитат: {% if top_source %}{{ top_source.name }} ({{ top_source.quotes.count }}){% else %}-{% endif %}</li>
+</ul>
+<p><a href="{% url 'top_quotes' %}">Перейти к ТОП</a></p>
+{% endblock %}

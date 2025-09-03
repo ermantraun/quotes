@@ -1,0 +1,59 @@
+{% extends "quotesapp/base.html" %}
+{% block title %}Топ цитат{% endblock %}
+{% block content %}
+<h2>Топ цитат (по лайкам)</h2>
+
+<form method="get" class="inline-filters">
+    <select name="source">
+        <option value="">Источник (все)</option>
+        {% for s in sources %}
+        <option value="{{ s.id }}" {% if current_source|add:'' == s.id|stringformat:'s' %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="type">
+        <option value="">Тип (все)</option>
+        <option value="movie" {% if current_type == 'movie' %}selected{% endif %}>Фильм</option>
+        <option value="book" {% if current_type == 'book' %}selected{% endif %}>Книга</option>
+        <option value="other" {% if current_type == 'other' %}selected{% endif %}>Другое</option>
+    </select>
+    <select name="lang">
+        <option value="">Язык (все)</option>
+        {% for lang in languages %}
+        <option value="{{ lang }}" {% if current_lang == lang %}selected{% endif %}>{{ lang }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Фильтр</button>
+    <a href="{% url 'top_quotes' %}" role="button" class="secondary">Сброс</a>
+</form>
+
+{% if page_obj.object_list %}
+<ol start="{{ page_obj.start_index }}">
+  {% for q in page_obj.object_list %}
+    <li>
+      <strong>{{ q.text|truncatechars:160 }}</strong><br/>
+      <small>
+        Источник: {{ q.source.name }} ({{ q.source.get_type_display }})
+        {% if q.author %}| Автор: {{ q.author }}{% endif %}
+        {% if q.year %}| Год: {{ q.year }}{% endif %}
+        | Язык: {{ q.language }}
+        | Лайки: {{ q.likes }} | Дизлайки: {{ q.dislikes }} | Просмотры: {{ q.views }} | Рейтинг: {{ q.rating }}
+      </small>
+    </li>
+  {% endfor %}
+</ol>
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page=1{% if current_source %}&source={{ current_source }}{% endif %}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_lang %}&lang={{ current_lang }}{% endif %}">&laquo;</a>
+      <a href="?page={{ page_obj.previous_page_number }}{% if current_source %}&source={{ current_source }}{% endif %}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_lang %}&lang={{ current_lang }}{% endif %}">&#8249;</a>
+    {% endif %}
+    <span class="current">Стр. {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if current_source %}&source={{ current_source }}{% endif %}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_lang %}&lang={{ current_lang }}{% endif %}">&#8250;</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}{% if current_source %}&source={{ current_source }}{% endif %}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_lang %}&lang={{ current_lang }}{% endif %}">&raquo;</a>
+    {% endif %}
+</div>
+{% else %}
+<p>Нет цитат.</p>
+{% endif %}
+{% endblock %}
