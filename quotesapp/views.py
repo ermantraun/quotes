@@ -13,7 +13,11 @@ def index(request):
     if quote:
         Quote.objects.filter(pk=quote.pk).update(views=F("views") + 1)
         quote.refresh_from_db(fields=["views"])
-    return render(request, "quotesapp/index.html", {"quote": quote})
+    user_action = None
+    if quote:
+        reactions = request.session.get("reactions", {})
+        user_action = reactions.get(str(quote.pk))
+    return render(request, "quotesapp/index.html", {"quote": quote, "user_action": user_action})
 
 def add_quote(request):
     if request.method == "POST":
@@ -87,9 +91,50 @@ def like_quote(request, pk):
     quote = get_object_or_404(Quote, pk=pk)
     if action not in ("like", "dislike"):
         return HttpResponseBadRequest("Invalid action")
-    if action == "like":
-        Quote.objects.filter(pk=quote.pk).update(likes=F("likes") + 1)
+
+    reactions = request.session.get("reactions", {})
+    prev = reactions.get(str(pk))
+
+    # Текущие значения
+    likes = quote.likes
+    dislikes = quote.dislikes
+
+    if prev == action:
+        # Отмена той же реакции
+        if action == "like":
+            likes = max(0, likes - 1)
+        else:
+            dislikes = max(0, dislikes - 1)
+        reactions.pop(str(pk), None)
+        user_action = None
+    elif prev in ("like", "dislike"):
+        # Переключение реакции
+        if prev == "like":
+            likes = max(0, likes - 1)
+        else:
+            dislikes = max(0, dislikes - 1)
+        if action == "like":
+            likes += 1
+        else:
+            dislikes += 1
+        reactions[str(pk)] = action
+        user_action = action
     else:
-        Quote.objects.filter(pk=quote.pk).update(dislikes=F("dislikes") + 1)
-    quote.refresh_from_db(fields=["likes", "dislikes"])
-    return JsonResponse({"likes": quote.likes, "dislikes": quote.dislikes, "rating": quote.rating})
+        # Новая реакция
+        if action == "like":
+            likes += 1
+        else:
+            dislikes += 1
+        reactions[str(pk)] = action
+        user_action = action
+
+    Quote.objects.filter(pk=pk).update(likes=likes, dislikes=dislikes)
+    request.session["reactions"] = reactions
+    request.session.modified = True
+
+    return JsonResponse({
+        "likes": likes,
+        "dislikes": dislikes,
+        "rating": likes - dislikes,
+        "user_action": user_action or "",
+    })

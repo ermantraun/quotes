@@ -6,16 +6,32 @@
   const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   function send(action, id) {
-    axios.post(`/like/${id}/`, new URLSearchParams({action}), {
-      headers: {'X-CSRFToken': csrftoken}
-    }).then(r => {
-      const data = r.data;
+    console.log(`Sending ${action} for quote ID: ${id}`);
+    fetch(`/like/${id}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      body: new URLSearchParams({ action }).toString()
+    })
+    .then(async (r) => {
+      if (!r.ok) {
+        const text = await r.text().catch(() => '');
+        throw new Error(`HTTP ${r.status} ${text}`);
+      }
+      return r.json();
+    })
+    .then((data) => {
+      console.log('Response:', data);
       document.getElementById('like-count').textContent = data.likes;
       document.getElementById('dislike-count').textContent = data.dislikes;
       const ratingEl = document.getElementById('rating');
       if (ratingEl) ratingEl.textContent = data.rating;
-    }).catch(() => {
-      // опционально можно показать сообщение
+    })
+    .catch((err) => {
+      console.error('Error:', err);
+      alert('Произошла ошибка. Попробуйте снова.');
     });
   }
 

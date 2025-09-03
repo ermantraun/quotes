@@ -17,8 +17,9 @@
         form.inline-filters { display: flex; gap: .5rem; flex-wrap: wrap; }
         form.inline-filters select { min-width: 140px; }
         .pagination { display:flex; gap:.4rem; flex-wrap: wrap; margin-top:1rem; }
-        .pagination a, .pagination span { padding:.3rem .6rem; border:1px solid #ccc; border-radius:4px; text-decoration:none; }
+        .pagination a, .pagination span { padding:.3rem .6рем; border:1px solid #ccc; border-radius:4px; text-decoration:none; }
         .pagination .current { background:#0366d6; color:#fff; border-color:#0366d6; }
+        button[aria-pressed="true"] { outline: 2px solid #0366d6; }
     </style>
 </head>
 <body>
@@ -49,6 +50,8 @@
 <footer class="container">
     <small>&copy; Test Task</small>
 </footer>
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+<script src="{% static 'quotesapp/js/like.js' %}"></script>
+{% endblock %}
 </body>
 </html>

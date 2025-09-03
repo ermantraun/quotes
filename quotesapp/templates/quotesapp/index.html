@@ -20,8 +20,8 @@
         Вес: {{ quote.weight }}
     </div>
     <div class="flex" style="margin-top:.5rem;">
-        <button id="like-btn" data-id="{{ quote.id }}" data-action="like">👍 Лайк (<span id="like-count">{{ quote.likes }}</span>)</button>
-        <button id="dislike-btn" data-id="{{ quote.id }}" data-action="dislike">👎 Дизлайк (<span id="dislike-count">{{ quote.dislikes }}</span>)</button>
+        <button id="like-btn" data-id="{{ quote.id }}" data-action="like" aria-pressed="{% if user_action == 'like' %}true{% else %}false{% endif %}">👍 Лайк (<span id="like-count">{{ quote.likes }}</span>)</button>
+        <button id="dislike-btn" data-id="{{ quote.id }}" data-action="dislike" aria-pressed="{% if user_action == 'dislike' %}true{% else %}false{% endif %}">👎 Дизлайк (<span id="dislike-count">{{ quote.dislikes }}</span>)</button>
         <a href="{% url 'index' %}">Обновить</a>
     </div>
 </div>
